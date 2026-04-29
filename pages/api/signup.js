@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { hashPassword } from '../../lib/auth';
+import jwt from 'jsonwebtoken';
+import { serialize } from 'cookie';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
@@ -36,11 +38,39 @@ export default async function handler(req, res) {
           updated_at: new Date().toISOString(),
         },
       ])
+      .select('id, email')
       .single();
 
     if (insertError) {
       throw insertError;
     }
+
+    // new code: 
+    // CREATE JWT
+    const token = jwt.sign(
+      {
+        userId: newUser.id,
+        email: newUser.email,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '1000d',
+      }
+    );
+
+
+    //SET HTTP-ONLY COOKIE
+    const cookie = serialize('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24 * 1000, // 1000 days
+      path: '/',
+    });
+
+    res.setHeader('Set-Cookie', cookie);
+
+
 
     res.status(201).json({ message: 'User created successfully', user: newUser });
   } catch (err) {

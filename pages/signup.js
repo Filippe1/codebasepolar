@@ -17,7 +17,7 @@ export default function SignUp() {
     });
 
     if (response.ok) {
-      router.push('/login');
+      router.push('/dashboard');
     } else {
       const data = await response.json();
       setError(data.message || 'Sign-up failed');
