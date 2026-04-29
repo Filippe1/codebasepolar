@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import jwt from 'jsonwebtoken';
 import { comparePassword } from '../../lib/auth';
+import { serialize } from 'cookie';
 // import { hashPassword } from '../../lib/auth';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
@@ -42,14 +43,15 @@ export default async function handler(req, res) {
     
     // Create a JWT
     const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
+      expiresIn: '1000d',
     });
     
+    // create the cookie for validation
     const cookie = serialize('auth_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 60 * 60,
+      maxAge: 60 * 60 * 24 * 1000,
       path: '/',
     });
     
