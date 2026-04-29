@@ -45,6 +45,22 @@ export default async function handler(req, res) {
       throw insertError;
     }
 
+    // New for profiles table. ADD THIS HERE
+    const { error: profileError } = await supabase
+    .from('profiles')
+    .insert([
+      {
+        user_id: newUser.id,  // MUST match users.id (your current schema)
+        email: newUser.email,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+    ]);
+    
+    if (profileError) throw profileError;
+    //console.log('profileError:', profileError);
+
+
     // new code: 
     // CREATE JWT
     const token = jwt.sign(
