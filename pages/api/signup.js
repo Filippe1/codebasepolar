@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { hashPassword } from '../../../lib/auth';
+import { hashPassword } from '../../lib/auth';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
@@ -32,7 +32,6 @@ export default async function handler(req, res) {
         {
           email,
           password_hash: hashedPassword,
-          is_active: true,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
