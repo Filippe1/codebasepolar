@@ -17,8 +17,6 @@ export default function Login() {
     });
 
     if (response.ok) {
-      const { token } = await response.json();
-      localStorage.setItem('token', token); // Store the token in localStorage
       router.push('/dashboard');
     } else {
       const data = await response.json();

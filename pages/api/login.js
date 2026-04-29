@@ -45,7 +45,18 @@ export default async function handler(req, res) {
       expiresIn: '1h',
     });
     
-    res.status(200).json({ message: 'Login successful', token });
+    const cookie = serialize('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60,
+      path: '/',
+    });
+    
+    res.setHeader('Set-Cookie', cookie);
+
+
+    res.status(200).json({ message: 'Login successful'});
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ message: 'Internal server error' });
