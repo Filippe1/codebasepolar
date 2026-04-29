@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -7,6 +8,29 @@ export default function Login() {
   const [error, setError] = useState('');
   const router = useRouter();
 
+  // check if already logged in: 
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/validate-token', {
+          method: 'GET',
+          credentials: 'include',
+        });
+  
+        if (res.ok) {
+          router.replace('/dashboard');
+        }
+      } catch (err) {
+        // ignore errors (user is not logged in)
+      }
+    };
+  
+    checkAuth();
+  }, [router]);
+
+
+
+  // normal login: 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
