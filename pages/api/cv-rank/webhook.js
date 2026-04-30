@@ -1,4 +1,4 @@
-// former stripe webhook
+// polar webhook
 // File: /pages/api/webhooks/polar.js
 // Next.js Pages Router (JavaScript)
 import { validateEvent, WebhookVerificationError } from '@polar-sh/sdk/webhooks';
